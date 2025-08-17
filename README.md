@@ -1,6 +1,6 @@
 Python version: set in .python-version
 
-Lock: pip-compile --generate-hashes
+Lock: pip-compile --allow-unsafe --generate-hashes
 
 Install: pip install --require-hashes -r requirements.txt
 
