@@ -1,6 +1,5 @@
 from datetime import datetime
 from app.celery import celery
-from . import db
 from app.models.job import Job
 from app import db
 
