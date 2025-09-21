@@ -2,7 +2,7 @@ Python version: set in .python-version
 
 Lock: pip-compile --allow-unsafe --generate-hashes > requirements.txt
 
-Install: pip install --require-hashes -r requirements.txt
+Install: pip-sync
 
 Update deps:
 
