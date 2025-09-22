@@ -1,36 +1,36 @@
 version: '3.8'
 
 services:
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    expose:
-      - 6379
-    networks:
-      - app-network
-
-  # 2. Flask Web App Service
   web:
     build: . # Uses the single Dockerfile in the current directory
     container_name: flask-web
-    command: gunicorn --bind 0.0.0.0:5000 wsgi:web_app # Run Gunicorn
+    command: gunicorn --bind 0.0.0.0:3000 wsgi:web_app # Run Gunicorn
     ports:
-      - "5000:5000"
-    depends_on:
-      - redis
+      - "3000:3000"
     env_file:
-      - .env # Use environment variables for configuration
+      - .env
     networks:
       - app-network
 
-  # 3. Celery Worker Service
   worker:
     build: . # Uses the *same* single Dockerfile
     container_name: celery-worker
-    command: celery -A your_app.celery worker -l info # Run Celery worker
+    command: celery -A app.celery worker -l info # Run Celery worker
     depends_on:
-      - redis
       - web # Depend on web to ensure common setup runs first, if needed
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  flower:
+    build: .
+    container_name: celery-flower
+    command: celery -A app.celery flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - worker
     env_file:
       - .env
     networks:

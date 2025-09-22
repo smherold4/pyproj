@@ -11,4 +11,5 @@ Update deps:
 3. pip-sync
 4. commit updated requirements.txt
 
-Flower: celery -A app flower
+Celery: celery -A app.celery worker -l info
+Flower: celery -A app.celery flower
