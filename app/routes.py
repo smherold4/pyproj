@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, redirect, url_for, render_template, request, flash
 from app.models.job import Job
 from app import db
-from app.tasks.process_job import process_job
+from app.tasks import process_job
 
 bp = Blueprint("routes", __name__)
 

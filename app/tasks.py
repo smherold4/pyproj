@@ -3,7 +3,7 @@ from app.celery import tasks_app
 from app.models.job import Job
 from app import db
 
-@tasks_app.task(name="tasks.process_job")
+@tasks_app.task()
 def process_job(job_id: int):
     # Use a raw connection to avoid app context requirements in Celery
     # but SQLAlchemy session is fine when we set up the app context below.
@@ -14,4 +14,4 @@ def process_job(job_id: int):
         job = db.session.get(Job, job_id)
         job.processed_at = datetime.now()
         db.session.commit()
-        return job
+        return job.id
