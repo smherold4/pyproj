@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install --require-hashes -r requirements.txt
+RUN pip install --require-hashes --no-cache-dir -r requirements.txt
 
 # Copy the rest of the app code
 COPY . .
@@ -17,4 +17,5 @@ COPY . .
 EXPOSE 5000
 
 # Run the Flask app
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:web_app"]
+
