@@ -4,11 +4,18 @@ FROM python:3.12-slim
 # Set working directory inside container
 WORKDIR /app
 
+# for production
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
 # Copy requirements first (for better caching)
 COPY requirements.txt .
 
-# Install dependencies
-RUN apt-get update && apt-get install -y build-essential libpq-dev
+# Install linux dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev && rm -rf /var/lib/apt/lists/*
+
+# Pip install
 RUN pip install --require-hashes --no-cache-dir -r requirements.txt
 
 # Copy the rest of the app code
