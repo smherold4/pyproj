@@ -5,6 +5,13 @@ Lock: pip-compile --allow-unsafe --generate-hashes > requirements.txt
 
 Install: pip-sync
 
+## Create clean venv for local development
+
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install pip-tools
+
 ## Update deps:
 
 1. edit requirements.in
@@ -14,7 +21,6 @@ Install: pip-sync
 
 Celery: celery -A app.celery worker -l info
 Flower: celery -A app.celery flower
-
 
 ## Jumpbox
 ssh -i ~/Desktop/ec2-rsa.pem ec2-user@18.188.141.97

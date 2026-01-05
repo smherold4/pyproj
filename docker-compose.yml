@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  web:
+  backend:
     build: . # Uses the single Dockerfile in the current directory
-    container_name: flask-web
+    container_name: flask-backend
     command: gunicorn --bind 0.0.0.0:3000 wsgi:web_app # Run Gunicorn
     ports:
       - "3000:3000"
@@ -17,11 +17,27 @@ services:
     container_name: celery-worker
     command: celery -A app.celery worker -l info # Run Celery worker
     depends_on:
-      - web # Depend on web to ensure common setup runs first, if needed
+      - backend # Depend on web to ensure common setup runs first, if needed
     env_file:
       - .env
     networks:
       - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vite-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://backend:3000
+    depends_on:
+      - backend
+    command: npm run dev -- --host
 
   flower:
     build: .
