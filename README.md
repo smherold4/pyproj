@@ -12,12 +12,19 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install pip-tools
 
-## Update deps:
+## DB migrations
+
+1. make change to a model .py file
+2. flask db revision --autogenerate -m "add name to jobs"
+3. flask db upgrade
+
+## Update python requirements:
 
 1. edit requirements.in
 2. run pip-compile command above
 3. pip-sync
-4. commit updated requirements.txt
+
+## Celery Stuff
 
 Celery: celery -A app.celery worker -l info
 Flower: celery -A app.celery flower

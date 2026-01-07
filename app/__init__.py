@@ -9,6 +9,7 @@ load_dotenv()
 
 db = SQLAlchemy()
 
+
 def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "")
@@ -19,7 +20,8 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from .routes import bp as routes_bp
-    app.register_blueprint(routes_bp)
+    from app.routes import api_bp
+
+    app.register_blueprint(api_bp)
 
     return app
