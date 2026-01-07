@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
@@ -12,6 +12,21 @@ services:
     networks:
       - app-network
 
+  frontend:
+    container_name: nextjs-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      # Used by SSR (server-side fetch)
+      NEXT_PUBLIC_API_URL: http://backend:3000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
   worker:
     build: . # Uses the *same* single Dockerfile
     container_name: celery-worker
@@ -22,22 +37,6 @@ services:
       - .env
     networks:
       - app-network
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: vite-frontend
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - VITE_API_URL=http://backend:3000
-    depends_on:
-      - backend
-    command: npm run dev -- --host
 
   flower:
     build: .
