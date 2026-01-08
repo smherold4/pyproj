@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { getCounts } from "./test/utils/actions";
-import Link from "next/link";
+import { getCounts } from "./utils/actions";
+import { EnqueueJob } from "./EnqueueJob";
 
 export default async function Home() {
   const counts = await getCounts();
@@ -15,8 +15,14 @@ export default async function Home() {
           height={20}
           priority
         />
-        <h1>Home Page</h1>
-        <Link href="/test">Test Page</Link>
+        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+            Testing api calls
+          </h1>
+
+          <EnqueueJob initialCounts={counts} />
+        </div>
+        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row"></div>
       </main>
     </div>
   );
