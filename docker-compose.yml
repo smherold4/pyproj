@@ -4,34 +4,38 @@ services:
   backend:
     build: . # Uses the single Dockerfile in the current directory
     container_name: flask-backend
-    command: gunicorn --bind 0.0.0.0:3000 wsgi:web_app # Run Gunicorn
-    ports:
-      - "3000:3000"
     env_file:
       - .env
     networks:
       - app-network
+    ports:
+      - "8001:8000"
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: nextjs-frontend
     command: yarn dev
-    ports:
-      - "3001:3000"
-    environment:
-      # Used by SSR (server-side fetch)
-      NEXT_PUBLIC_API_URL: http://backend:3000
+    container_name: nextjs-frontend
     depends_on:
       - backend
+    environment:
+      # Used by SSR (server-side fetch)
+      NEXT_PUBLIC_API_URL: http://backend:8000
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "3001:3000"
     networks:
       - app-network
+    volumes:
+      - ./frontend:/app # mount source code
+      - /app/node_modules
+    working_dir: /app
 
   worker:
     build: . # Uses the *same* single Dockerfile
-    container_name: celery-worker
     command: celery -A app.celery worker -l info # Run Celery worker
+    container_name: celery-worker
     depends_on:
       - backend # Depend on web to ensure common setup runs first, if needed
     env_file:
@@ -43,14 +47,14 @@ services:
     build: .
     container_name: celery-flower
     command: celery -A app.celery flower
-    ports:
-      - "5555:5555"
     depends_on:
       - worker
     env_file:
       - .env
     networks:
       - app-network
+    ports:
+      - "5555:5555"
 
 networks:
   app-network:

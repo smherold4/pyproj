@@ -11,7 +11,7 @@ RUN yarn install --frozen-lockfile
 # Copy the rest of the app
 COPY . .
 
-# Build the app
+# not necessary if starting with command: yarn dev
 RUN yarn build
 
 EXPOSE 3000

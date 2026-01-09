@@ -22,8 +22,10 @@ RUN pip install --require-hashes --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port Flask will run on
-EXPOSE 3000
+EXPOSE 8000
 
-# Run the Flask app
-CMD ["gunicorn", "--bind", "0.0.0.0:3000", "wsgi:web_app"]
-
+CMD gunicorn \
+  --bind 0.0.0.0:${PORT:-8000} \
+  --workers ${GUNICORN_WORKERS:-2} \
+  --timeout ${GUNICORN_TIMEOUT:-60} \
+  wsgi:web_app
